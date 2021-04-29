@@ -15,7 +15,7 @@ input[showed] + br + div {
 
   display: block;
   margin: 10px;
-  max-height: 300px;
+  max-height: max-content;
   float: left;
 }
 
@@ -26,13 +26,15 @@ input[showed] + br + div {
 
 .requests-container {
   clear: both;
-  margin-top: 200px;
+
 }
 
 .problem-text {
   display: block;
-  resize: none;
+  resize: horizontal;
   clear: both;
+  text-align: left;
+  margin-bottom: 2px;
 }
 
 .client-data-container {
@@ -47,9 +49,6 @@ input[showed] + br + div {
   clear: both;
 }
 
-tbody.collapse.in {
-  display: table-row-group;
-}
 
 .client-data {
   clear: both;
