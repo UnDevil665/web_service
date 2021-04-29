@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% extends "layout.html" %}
+{% load static %}
+<head>
+    {% block head_block %}
+        <link rel="stylesheet" type="text/css" href="{% static "css/main_page.css" %}">
+    {% endblock %}
+    <title></title>
+</head>
+<body>
+    {% block body_content %}
+        <div class="systems-label">Для регистрации на портале выберите систему к которой необходимо подключение, нажав на картинку:</div>
+        <div class="systems-container">
+            <div class="system-container">
+                <label class="1system_label">Система 1</label>
+                <a href="{% url 'signup' %}"><img src="{% static 'images/1system.jpeg' %}" alt="1system_img"></a>
+            </div>
+
+        </div>
+    {% endblock %}
+</body>
+</html>

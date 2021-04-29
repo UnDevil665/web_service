@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% extends "layout.html" %}
+{% load static %}
+<head>
+    {% block head_block %}
+        <link rel="stylesheet" type="text/css" href="{% static "css/login.css" %}">
+    {% endblock %}
+    <title></title>
+</head>
+    <body>
+        {% block body_content %}
+            <form method="post" action="{% url "login" %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="login-container">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                </div>
+                <div class="password-container">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                </div>
+
+            <input type="submit" value="login" />
+            <input type="hidden" name="next" value="{{ next }}" />
+            </form>
+
+        {# Assumes you setup the password_reset view in your URLconf #}
+    <p><a href="{% url 'password_reset' %}">Забыли пароль?</a></p>
+    {% endblock %}
+</body>
+</html>

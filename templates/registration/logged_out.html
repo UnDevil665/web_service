@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% extends "layout.html" %}
+{% load static %}
+<head>
+
+    <title></title>
+</head>
+<body>
+{% block body_content %}
+    <p>Вы вышли из личного кабинета</p>
+    <button class="login_button"><a href="{% url 'main' %}">Вернуться на главную</a></button>
+{% endblock %}
+</body>
+</html>

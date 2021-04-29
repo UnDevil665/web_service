@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}InformSecure: СКЗИ{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/layout.css' %}">
+    {% block head_block %}{% endblock %}
+</head>
+<body>
+
+        <header>
+            <nav class="navbar">
+                <a href="{% url 'main' %}"><img src="{% static 'images/informsecure_icon.png' %}" alt="informsecure_icon.png"></a>
+            </nav>
+            <ul class="navbar-log-panel">
+                {% if user.is_authenticated %}
+                    <li>Пользователь: {{ user.get_username }}</li>
+                    <li><button class="logout_button"><a href="{% url 'logout' %}">Выход</a></button></li>
+                    <li><button class="login_button"><a href="{% url 'account' %}">Личный кабинет</a></button></li>
+                {% else %}
+                    <li><button class="login_button"><a href="{% url 'login' %}">Войти в Личный кабинет</a></button></li>
+                {% endif %}
+            </ul>
+
+        </header>
+
+    <div class="body-container">
+        <div class="container">
+            {% block body_content %}
+            {% endblock %}
+        </div>
+    </div>
+    <div class="wrapper"></div>
+    <footer>
+        <p class="footer-text">Компания «InformSecure» - российская сервисная компанния, специализирующаяся на оказании услуг по обеспечению информационной безопасности автоматизированных систем различного назначения и любого уровня сложности.</p>
+    </footer>
+</body>
+</html>

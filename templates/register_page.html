@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru" >
+{% extends "layout.html" %}
+{% load static %}
+<head>
+    {% block title %}
+        InformSecure: Регистрация
+    {% endblock %}
+    {% block head_block %}
+        <link rel="stylesheet" type="text/css" href="{% static "css/register_page.css" %}">
+    {% endblock %}
+    <title></title>
+</head>
+<body>
+{% block body_content %}
+    <div class="client-form">
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <form action="{% url 'signup' %}" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="fieldWrapper">
+            <label for="{{ form.first_name.id_for_label }}">Имя</label>
+            <span>{{ form.first_name }}</span>
+            <span>{{ form.first_name.errors }}</span>
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.last_name.id_for_label }}">Фамилия</label>
+            {{ form.last_name }}
+            {{ form.last_name.errors }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.username.id_for_label }}">Логин</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.password.id_for_label }}">Пароль</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.email.id_for_label }}">Почта</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.tp_key.id_for_label }}">Ключ ТП</label>
+            {{ form.tp_key }}
+            {{ form.tp_key.errors }}
+        </div>
+        <input type="submit" value="OK">
+    </form>
+    </div>
+
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% extends "layout.html" %}
+{% load static %}
+<head>
+    {% block head_block %}
+        <link rel="stylesheet" type="text/css" href="{% static "css/account_page.css" %}">
+        <script type="text/javascript" src="{% static 'js/account_scripts.js' %}" ></script>
+
+
+    {% endblock %}
+    <title></title>
+
+</head>
+<body>
+    {% block body_content %}
+    <div class="client-data-container">
+        {% csrf_token %}
+        <div class="client-data">
+            <label for="{{ organization }}">Организация:</label>
+            {{ organization }}
+        </div>
+
+        <div class="client-data">
+            <label for="{{ client }}">Данные клиента: </label>
+            {{ client }}
+        </div>
+    </div>
+        <div>
+        <input type="button" value="Создать заявку" onclick="toggleVisibility(this);" class="creation-button" /><br>
+            <div class="request-creation-container">
+                <form name="problem" method="post" action="">
+                    <label for="problem-text-id" style="display: block; text-align: left; margin-bottom: 2px;">Заявка в техническую поддержку:</label>
+                    <textarea class="problem-text" id="problem-text-id" name="problem_text" cols="100" rows="10"></textarea>
+                    <input type="submit" value="Отправить заявку" style="float: left; margin: 10px 1px">
+                </form>
+
+            </div>
+            <div class="requests-container">
+                <table class="table table-responsive table-hover">
+                <thead>
+                    <tr><th>Column</th><th>Column</th><th>Column</th><th>Column</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
+                        <td><i class="fa fa-plus" aria-hidden="true"></i></td>
+                        <td>data</td>
+                        <td>data</td>
+                        <td>data</td>
+                    </tr>
+                </tbody>
+                <tbody id="group-of-rows-1" class="collapse">
+                    <tr>
+                        <td>- child row</td>
+                        <td>data 1</td>
+                        <td>data 1</td>
+                        <td>data 1</td>
+                    </tr>
+                    <tr>
+                        <td>- child row</td>
+                        <td>data 1</td>
+                        <td>data 1</td>
+                        <td>data 1</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-2" aria-expanded="false" aria-controls="group-of-rows-2">
+                        <td><i class="fa fa-plus" aria-hidden="true"></i></td>
+                        <td>data</td>
+                        <td>data</td>
+                        <td>data</td>
+                    </tr>
+                </tbody>
+                <tbody id="group-of-rows-2" class="collapse">
+                    <tr>
+                        <td>- child row</td>
+                        <td>data 2</td>
+                        <td>data 2</td>
+                        <td>data 2</td>
+                    </tr>
+                    <tr>
+                        <td>- child row</td>
+                        <td>data 2</td>
+                        <td>data 2</td>
+                        <td>data 2</td>
+                    </tr>
+                </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    {% endblock %}
+
+
+</body>
+</html>

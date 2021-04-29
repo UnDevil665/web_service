@@ -1,0 +1,58 @@
+
+input + br + div {
+  display: inline-block;
+  float: left;
+  margin: 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.5s all linear;
+
+  top: 50px;
+  left: 10px;
+}
+
+input[showed] + br + div {
+
+  display: block;
+  margin: 10px;
+  max-height: 300px;
+  float: left;
+}
+
+.request-creation-container {
+  margin: auto;
+  clear: both;
+}
+
+.requests-container {
+  clear: both;
+  margin-top: 200px;
+}
+
+.problem-text {
+  display: block;
+  resize: none;
+  clear: both;
+}
+
+.client-data-container {
+  float: left;
+}
+
+.creation-button {
+  float: left;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  clear: both;
+}
+
+tbody.collapse.in {
+  display: table-row-group;
+}
+
+.client-data {
+  clear: both;
+  float: right;
+  margin: 5px 5px 5px;
+}
