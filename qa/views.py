@@ -4,8 +4,8 @@ from django.views.generic import ListView
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .forms import UserRegisterForm
-from .models import Organization, CustomUser, TPKey, TPKeysProduct
+from .forms import UserRegisterForm, RequestCreationForm
+from .models import Organization, CustomUser, TPKey, TPKeysProduct, Product, Request
 
 
 class OrganizationView(ListView):
@@ -41,12 +41,32 @@ def get_main_page(request, *args, **kwargs):
 @login_required
 def get_account_page(request, *args, **kwargs):
     if request.method == "GET":
-        pass
+
         user = CustomUser.objects.get(username=request.user)
         organization = user.organization_title.title
         client = user.last_name + ' ' + user.first_name
-        return render(request, 'account_page.html', {'organization': organization, 'client': client})
+        keys = TPKey.objects.filter(organization_title=organization).values('id')
+        products = TPKeysProduct.objects.filter(key_id_id__in=keys).values('product_id')
+        products = Product.objects.filter(pk__in=products)
 
+        req_form = RequestCreationForm()
+
+        req_form.fields["product"].queryset = products
+        return render(request, 'account_page.html', {'organization': organization, 'client': client,
+                                                     'req_form': req_form})
+
+
+@require_POST
+def send_request(request, *args, **kwargs):
+    if request.method == "POST":
+        req_form = RequestCreationForm(request.POST)
+        if req_form.is_valid():
+            client = CustomUser.objects.get(username=request.user)
+            organization = Organization.objects.get(title=client.organization_title.title)
+            product = Product.objects.get(product=request.POST['product'])
+            req = Request.objects.create(client=client, client_organization=organization,
+                                         problem=request.POST['problem'], product=product)
+            return HttpResponseRedirect(reverse(get_account_page))
 
 
 

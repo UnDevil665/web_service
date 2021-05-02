@@ -24,3 +24,10 @@ class UserRegisterForm(forms.Form):
     email = forms.EmailField(label="Почта")
     username = forms.CharField(max_length=150, label="Логин")
     password = forms.CharField(widget=forms.PasswordInput())
+
+
+class RequestCreationForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ['product', 'problem']
+
