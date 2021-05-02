@@ -13,11 +13,17 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.title
 
+    def __str__(self):
+        return self.title
+
 
 class Product(models.Model):
     product = models.CharField(max_length=20, unique=True)
 
     def __unicode__(self):
+        return self.product
+
+    def __str__(self):
         return self.product
 
 
@@ -29,6 +35,9 @@ class TPKey(models.Model):
     def __unicode__(self):
         return self.key
 
+    def __str__(self):
+        return self.key
+
 
 class TPKeysProduct(models.Model):
     key_id = models.ForeignKey(TPKey, on_delete=models.RESTRICT)
@@ -36,6 +45,9 @@ class TPKeysProduct(models.Model):
 
     def __unicode__(self):
         return self.id
+
+    def __str__(self):
+        return self.key_id
 
 
 class CustomUser(AbstractUser):
@@ -57,4 +69,7 @@ class Request(models.Model):
     problem = models.TextField()
 
     def __unicode__(self):
+        return self.id
+
+    def __str__(self):
         return self.id
