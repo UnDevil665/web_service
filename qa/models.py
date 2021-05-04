@@ -56,7 +56,6 @@ class CustomUser(AbstractUser):
 
 
 class Request(models.Model):
-    id = models.AutoField(primary_key=True)
     client = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
     client_organization = models.ForeignKey(Organization, to_field='title', on_delete=models.RESTRICT,
                                             related_name='request_clients_organization')
@@ -73,3 +72,10 @@ class Request(models.Model):
 
     def __str__(self):
         return self.id
+
+
+class Correspondence(models.Model):
+    request = models.ForeignKey(Request, on_delete=models.RESTRICT)
+    answer = models.TextField()
+    from_user = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
+    date = models.DateTimeField(auto_now_add=True)
