@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, Http404
+from django.shortcuts import render, HttpResponseRedirect, Http404, redirect
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import ListView
 from django.urls import reverse
@@ -6,9 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from rest_framework.parsers import JSONParser
 
-from .forms import UserRegisterForm, RequestCreationForm
-from .models import Organization, CustomUser, TPKey, TPKeysProduct, Product, Request
-from .serializers import RequestSerializer
+from .forms import UserRegisterForm, RequestCreationForm, MessageSendForm
+from .models import Organization, CustomUser, TPKey, TPKeysProduct, Product, Request, Correspondence
+from .serializers import RequestSerializer, CorrespondenceSerializer
 
 
 class OrganizationView(ListView):
@@ -58,14 +58,22 @@ def get_account_page(request, *args, **kwargs):
         # adding list of available products to view
         req_form.fields["product"].queryset = products
 
+        message_form = MessageSendForm()
+
         # List of client's requests
         requests = Request.objects.filter(client=user).order_by('-registration_date')
-        serializer = RequestSerializer(requests, many=True)
-        print(serializer.data[0])
-        print(serializer.data)
+        answers = Correspondence.objects.filter(req__in=requests.values('id')).order_by('id').order_by('date').select_related('from_user')
+        bruh = Correspondence.objects.filter(req__in=requests.values('id')).order_by('id').order_by('date').select_related('from_user')
+        for b in bruh:
+            print(b.from_user.first_name + b.from_user.last_name)
 
+        request_serializer = RequestSerializer(requests, many=True)
+        correspondence_serializer = CorrespondenceSerializer(answers, many=True)
+        print(correspondence_serializer.data)
         return render(request, 'account_page.html', {'organization': organization, 'client': client,
-                                                     'req_form': req_form, 'data': serializer.data})
+                                                     'req_form': req_form, 'message_form': message_form,
+                                                     'reqs': request_serializer.data,
+                                                     'answers': correspondence_serializer.data})
 
 
 @require_POST
@@ -78,7 +86,19 @@ def send_request(request, *args, **kwargs):
             product = Product.objects.get(product=request.POST['product'])
             req = Request.objects.create(client=client, client_organization=organization,
                                          problem=request.POST['problem'], product=product)
+            ans = Correspondence.objects.create(req=req, from_user=client, answer=request.POST['problem'])
             return HttpResponseRedirect(reverse(get_account_page))
 
 
+@require_POST
+def send_message(request, *args, **kwargs):
+    if request.method == "POST":
+        req_id = request.GET.get('request_id')
+        req_query = Request.objects.get(pk=req_id)
+
+        mes_form = MessageSendForm(request.POST)
+        if mes_form.is_valid():
+            client = CustomUser.objects.get(username=request.user)
+            ans = Correspondence.objects.create(req=req_query, from_user=client, answer=request.POST['answer'])
+            return HttpResponseRedirect(reverse('account'))
 

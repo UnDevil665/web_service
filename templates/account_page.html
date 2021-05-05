@@ -49,112 +49,44 @@
                 <thead>
                     <tr><th scope="col">Column</th><th scope="col">№ Заявки</th><th scope="col">Статус</th><th scope="col">Дата создания</th></tr>
                 </thead>
-                <tbody class="main-row">
-                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
-                        <td><i class="fa fa-plus" >&#62;</i></td>
-                        <td>1111</td>
-                        <td>Открыта</td>
-                        <td>11.11.2011</td>
-                    </tr>
 
-                </tbody>
-                <tbody id="group-of-rows-1" class="collapse">
-                    <tr>
-                        <td colspan="4">
-                            <table class="table table-responsive table-bordered">
-                            <thead>
-                            <tr><th scope="col">Автор</th><th scope="col">Сообщение</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
-                                    <td>Я</td>
-                                    <td>Беда</td>
-                                </tr>
-                                <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
-                                    <td>Я</td>
-                                    <td>Банд</td>
-                                </tr>
-                            </tbody>
-                            </table>
-                        <td>
-                    </tr>
-                </tbody>
-
-                {% for elem in data %}
-                    <tbody class="main-row">
-                        <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
+                {% for req in reqs %}
+                    <tbody class="main-row row{{ forloop.counter0 }}">
+                        <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-{{ forloop.counter0 }}" aria-expanded="false" aria-controls="group-of-rows-{{ forloop.counter0 }}">
                             <td><i class="fa fa-plus" >&#62;</i></td>
-                            {% for key, value in elem.items %}
-                                <td>{{ value }}</td>
-                            {% endfor %}
+                            <td>{{ req.id }}</td>
+                            <td>{{ req.status }}</td>
+                            <td>{{ req.registration_date }}</td>
                         </tr>
-                    </tbody>
-                    <tbody id="group-of-rows-1" class="collapse">
-                        <tr>
+                        <tr id="group-of-rows-{{ forloop.counter0 }}" class="collapse ans-row{{ forloop.counter0 }}">
                             <td colspan="4">
                                 <table class="table table-responsive table-bordered">
-                                <thead>
-                                <tr><th scope="col">Автор</th><th scope="col">Сообщение</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
-                                        <td>Я</td>
-                                        <td>Беда</td>
-                                    </tr>
-                                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
-                                        <td>Я</td>
-                                        <td>Банд</td>
-                                    </tr>
-                                </tbody>
+                                    <thead>
+                                        <tr><th scope="col">Автор</th><th scope="col">Сообщение</th><th scope="col">Дата сообщения</th><</tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for ans in answers %}
+                                            {% ifequal ans.req req.id %}
+                                                <tr>
+                                                    <td>{{ ans.from_user}}</td>
+                                                    <td>{{ ans.answer }}</td>
+                                                    <td>{{ ans.date }}</td>
+                                                </tr>
+                                            {% endifequal %}
+                                        {% endfor %}
+                                    </tbody>
                                 </table>
                             <td>
                         </tr>
                     </tbody>
+
                 {% endfor %}
 
-                <tbody>
-                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-2" aria-expanded="false" aria-controls="group-of-rows-2">
-                        <td><i class="fa fa-plus" >&#62;</i></td>
-                        <td>data</td>
-                        <td>data</td>
-                        <td>data</td>
-                    </tr>
-                </tbody>
-                <tbody id="group-of-rows-2" class="collapse">
-                    <tr>
-                        <td>- child row</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                    </tr>
-                    <tr>
-                        <td>- child row</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                    </tr>
-                </tbody>
-                <tbody>
-                    <tr>
-                        <td colspan="4">
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    <li class="page-item"><a class="page-link" href="#">В начало</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                </ul>
-                            </nav>
-                        </td>
-                    </tr>
-                </tbody>
                 </table>
 
             </div>
         </div>
-    <script>
-    var table = document.getElementById("mytable")
-    tbody = table.createTBody()
-    tbody.className = "main-row" //TODO make a script for dynamic table generation
-    </script>
+
     {% endblock %}
 
 </body>

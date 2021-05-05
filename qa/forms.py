@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Organization, Product, Request
+from .models import CustomUser, Organization, Product, Request, Correspondence
 from django import forms
 
 
@@ -31,3 +31,8 @@ class RequestCreationForm(forms.ModelForm):
         model = Request
         fields = ['product', 'problem']
 
+
+class MessageSendForm(forms.ModelForm):
+    class Meta:
+        model = Correspondence
+        fields = ['answer']

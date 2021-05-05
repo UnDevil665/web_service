@@ -81,7 +81,7 @@ class Request(models.Model):
 
 
 class Correspondence(models.Model):
-    request = models.ForeignKey(Request, on_delete=models.RESTRICT)
+    req = models.ForeignKey(Request, on_delete=models.RESTRICT)
     answer = models.TextField()
     from_user = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
     date = models.DateTimeField(auto_now_add=True)
