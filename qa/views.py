@@ -4,8 +4,11 @@ from django.views.generic import ListView
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from rest_framework.parsers import JSONParser
+
 from .forms import UserRegisterForm, RequestCreationForm
 from .models import Organization, CustomUser, TPKey, TPKeysProduct, Product, Request
+from .serializers import RequestSerializer
 
 
 class OrganizationView(ListView):
@@ -41,19 +44,28 @@ def get_main_page(request, *args, **kwargs):
 @login_required
 def get_account_page(request, *args, **kwargs):
     if request.method == "GET":
-
+        # Client's information
         user = CustomUser.objects.get(username=request.user)
         organization = user.organization_title.title
         client = user.last_name + ' ' + user.first_name
+
+        # List of available products to client's company
         keys = TPKey.objects.filter(organization_title=organization).values('id')
         products = TPKeysProduct.objects.filter(key_id_id__in=keys).values('product_id')
         products = Product.objects.filter(pk__in=products)
 
         req_form = RequestCreationForm()
-
+        # adding list of available products to view
         req_form.fields["product"].queryset = products
+
+        # List of client's requests
+        requests = Request.objects.filter(client=user).order_by('-registration_date')
+        serializer = RequestSerializer(requests, many=True)
+        print(serializer.data[0])
+        print(serializer.data)
+
         return render(request, 'account_page.html', {'organization': organization, 'client': client,
-                                                     'req_form': req_form})
+                                                     'req_form': req_form, 'data': serializer.data})
 
 
 @require_POST

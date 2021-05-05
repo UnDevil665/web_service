@@ -55,6 +55,10 @@ class CustomUser(AbstractUser):
                                            on_delete=models.RESTRICT, related_name='clients_organization', null=False)
 
 
+class Status(models.Model):
+    status = models.CharField(max_length=20, unique=True)
+
+
 class Request(models.Model):
     client = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
     client_organization = models.ForeignKey(Organization, to_field='title', on_delete=models.RESTRICT,
@@ -66,6 +70,8 @@ class Request(models.Model):
     registration_date = models.DateTimeField(auto_now_add=True)
 
     problem = models.TextField()
+
+    status = models.ForeignKey(Status, to_field='status', on_delete=models.RESTRICT, default='Открыта')
 
     def __unicode__(self):
         return self.id

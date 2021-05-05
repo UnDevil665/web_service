@@ -28,6 +28,7 @@
         <div class="client-data">
             <label for="{{ client }}">Данные клиента: </label>
             {{ client }}
+
         </div>
     </div>
         <div>
@@ -44,17 +45,18 @@
 
             </div>
             <div class="requests-container">
-                <table class="table table-responsive table-hover">
+                <table class="table table-responsive table-hover" id="mytable">
                 <thead>
                     <tr><th scope="col">Column</th><th scope="col">№ Заявки</th><th scope="col">Статус</th><th scope="col">Дата создания</th></tr>
                 </thead>
-                <tbody>
+                <tbody class="main-row">
                     <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
                         <td><i class="fa fa-plus" >&#62;</i></td>
                         <td>1111</td>
-                        <td>Открты</td>
+                        <td>Открыта</td>
                         <td>11.11.2011</td>
                     </tr>
+
                 </tbody>
                 <tbody id="group-of-rows-1" class="collapse">
                     <tr>
@@ -68,18 +70,48 @@
                                     <td>Я</td>
                                     <td>Беда</td>
                                 </tr>
+                                <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
+                                    <td>Я</td>
+                                    <td>Банд</td>
+                                </tr>
                             </tbody>
                             </table>
                         <td>
-
-                    </tr>
-                    <tr>
-                        <td>- child row</td>
-                        <td>data 1</td>
-                        <td>data 1</td>
-                        <td>data 1</td>
                     </tr>
                 </tbody>
+
+                {% for elem in data %}
+                    <tbody class="main-row">
+                        <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
+                            <td><i class="fa fa-plus" >&#62;</i></td>
+                            {% for key, value in elem.items %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                    <tbody id="group-of-rows-1" class="collapse">
+                        <tr>
+                            <td colspan="4">
+                                <table class="table table-responsive table-bordered">
+                                <thead>
+                                <tr><th scope="col">Автор</th><th scope="col">Сообщение</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
+                                        <td>Я</td>
+                                        <td>Беда</td>
+                                    </tr>
+                                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
+                                        <td>Я</td>
+                                        <td>Банд</td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            <td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+
                 <tbody>
                     <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-2" aria-expanded="false" aria-controls="group-of-rows-2">
                         <td><i class="fa fa-plus" >&#62;</i></td>
@@ -118,10 +150,12 @@
 
             </div>
         </div>
-
+    <script>
+    var table = document.getElementById("mytable")
+    tbody = table.createTBody()
+    tbody.className = "main-row" //TODO make a script for dynamic table generation
+    </script>
     {% endblock %}
-
-
 
 </body>
 </html>
