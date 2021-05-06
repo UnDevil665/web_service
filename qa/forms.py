@@ -1,4 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Organization, Product, Request, Correspondence
 from django import forms
 

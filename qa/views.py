@@ -3,6 +3,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import ListView
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login
 from rest_framework.parsers import JSONParser
 
@@ -43,6 +44,7 @@ def get_main_page(request, *args, **kwargs):
 
 @login_required
 def get_account_page(request, *args, **kwargs):
+
     if request.method == "GET":
         # Client's information
         user = CustomUser.objects.get(username=request.user)
@@ -62,18 +64,24 @@ def get_account_page(request, *args, **kwargs):
 
         # List of client's requests
         requests = Request.objects.filter(client=user).order_by('-registration_date')
-        answers = Correspondence.objects.filter(req__in=requests.values('id')).order_by('id').order_by('date').select_related('from_user')
-        bruh = Correspondence.objects.filter(req__in=requests.values('id')).order_by('id').order_by('date').select_related('from_user')
-        for b in bruh:
-            print(b.from_user.first_name + b.from_user.last_name)
 
-        request_serializer = RequestSerializer(requests, many=True)
-        correspondence_serializer = CorrespondenceSerializer(answers, many=True)
-        print(correspondence_serializer.data)
+
+        # Pagination
+        paginator = Paginator(requests, 10, allow_empty_first_page=True)
+        page_number = request.GET.get('page')
+        if not page_number:
+            page_number = 1
+        page_obj = paginator.get_page(page_number)
+
+        ids = list()
+        for i in page_obj.object_list:
+            ids.append(i.id)
+        answers = Correspondence.objects.filter(req__in=ids).order_by('date').order_by('id').select_related('from_user')
+
         return render(request, 'account_page.html', {'organization': organization, 'client': client,
                                                      'req_form': req_form, 'message_form': message_form,
-                                                     'reqs': request_serializer.data,
-                                                     'answers': correspondence_serializer.data})
+                                                     'page_obj': page_obj, 'last_page': paginator.num_pages,
+                                                     'answers': answers})
 
 
 @require_POST

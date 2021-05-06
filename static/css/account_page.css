@@ -55,3 +55,15 @@ input[showed] + br + div {
   float: right;
   margin: 5px 5px 5px;
 }
+
+.message-col {
+  min-width: 500px;
+}
+
+.sender-col {
+  min-width: 300px;
+}
+
+.data-col {
+  min-width: 40px;
+}

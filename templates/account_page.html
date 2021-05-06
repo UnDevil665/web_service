@@ -49,8 +49,61 @@
                 <thead>
                     <tr><th scope="col">Column</th><th scope="col">№ Заявки</th><th scope="col">Статус</th><th scope="col">Дата создания</th></tr>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <nav aria-label="Page navigation">
+                                 <ul class="pagination">
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page=1">
+                                        Первая
+                                      </a>
+                                    </li>
+                                    <li class="page-item disabled">
+                                      {% if page_obj.has_previous %}
+                                          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                                            <span aria-hidden="false">«</span>
+                                            <span class="sr-only">Предыдущая</span>
+                                          </a>
+                                      {% else %}
+                                          <a class="page-link disabled" href="#" aria-label="Предыдущая">
+                                            <span aria-hidden="false">«</span>
+                                            <span class="sr-only">Предыдущая</span>
+                                          </a>
+                                      {% endif %}
+                                    </li>
+                                     {% if page_obj.has_previous %}
+                                         <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                                         </li>
+                                    {% endif %}
+                                    <li class="page-item active">
+                                      <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                                    </li>
+                                    {% if page_obj.has_next %}
+                                         <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                                         </li>
+                                    {% endif %}
 
-                {% for req in reqs %}
+                                    <li class="page-item">
+                                      {% if page_obj.has_next %}
+                                          <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Следующая">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Следующая</span>
+                                      </a>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page={{ last_page }}">Последняя</a>
+                                    </li>
+                                 </ul>
+                            </nav>
+                        </td>
+                    </tr>
+                </tfoot>
+
+                {% for req in page_obj %}
                     <tbody class="main-row row{{ forloop.counter0 }}">
                         <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-{{ forloop.counter0 }}" aria-expanded="false" aria-controls="group-of-rows-{{ forloop.counter0 }}">
                             <td><i class="fa fa-plus" >&#62;</i></td>
@@ -62,18 +115,29 @@
                             <td colspan="4">
                                 <table class="table table-responsive table-bordered">
                                     <thead>
-                                        <tr><th scope="col">Автор</th><th scope="col">Сообщение</th><th scope="col">Дата сообщения</th><</tr>
+                                        <tr><th class="sender-col" scope="col">Отправитель</th><th class="message-col" scope="col">Сообщение</th><th class="data-col" scope="col">Дата сообщения</th></tr>
                                     </thead>
                                     <tbody>
                                         {% for ans in answers %}
-                                            {% ifequal ans.req req.id %}
+
+                                            {% ifequal ans.req.id req.id %}
                                                 <tr>
-                                                    <td>{{ ans.from_user}}</td>
-                                                    <td>{{ ans.answer }}</td>
-                                                    <td>{{ ans.date }}</td>
+                                                    <td class="sender-col">{{ ans.from_user.last_name}} {{ ans.from_user.first_name  }}</td>
+                                                    <td class="message-col">{{ ans.answer }}</td>
+                                                    <td class="data-col">{{ ans.date }}</td>
                                                 </tr>
                                             {% endifequal %}
                                         {% endfor %}
+                                            <tr>
+                                                <td colspan="3">
+                                                    <form name="problem" method="post" action="{% url 'send_message' %}?request_id={{ req.id }}">
+                                                        {% csrf_token %}
+                                                        <label for="{{ message_form.answer.id_for_label }}"></label>
+                                                        <span>{{ message_form.answer }}</span>
+                                                        <input type="submit" value="Отправить сообщение">
+                                                    </form>
+                                                </td>
+                                            </tr>
                                     </tbody>
                                 </table>
                             <td>
@@ -81,7 +145,6 @@
                     </tbody>
 
                 {% endfor %}
-
                 </table>
 
             </div>

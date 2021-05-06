@@ -58,6 +58,9 @@ class CustomUser(AbstractUser):
 class Status(models.Model):
     status = models.CharField(max_length=20, unique=True)
 
+    def __str__(self):
+        return self.status
+
 
 class Request(models.Model):
     client = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
@@ -85,3 +88,6 @@ class Correspondence(models.Model):
     answer = models.TextField()
     from_user = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.id
