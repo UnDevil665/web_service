@@ -6,7 +6,8 @@ body  {
 
 }
 .navbar{
-    display: inline;
+     display: inline;
+     float: left;
      font-size: 36px;
      padding-top: 10px;
      text-align: center;
@@ -15,6 +16,7 @@ body  {
 ul.navbar-log-panel {
     display: inline;
     float: right;
+    margin-right: 100px;
     list-style-type: none;
 }
 
@@ -31,12 +33,13 @@ ul.navbar-log-panel > li {
 
 header {
     text-align: justify;
-    padding: 1em 5%;
-    margin-bottom: 100px;
+    min-height: 112px;
+    padding: 5px;
+
     background: #2c3e50;
     color: #fff;
     position: fixed;
-    width: 90%;
+    width: 100%;
     clear: both;
 
 }
@@ -46,6 +49,10 @@ header::after {
     display: inline-block;
     width: 100%;
     position: fixed;
+}
+
+.login_button {
+    margin-top: 30px;
 }
 
 .body-container{

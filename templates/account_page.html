@@ -2,10 +2,13 @@
 <html lang="ru">
 {% extends "layout.html" %}
 {% load static %}
+
+
 <head>
     {% block head_block %}
         <link rel="stylesheet" type="text/css" href="{% static "css/account_page.css" %}">
         <script type="text/javascript" src="{% static 'js/account_scripts.js' %}" ></script>
+
 
 
     {% endblock %}
@@ -21,77 +24,133 @@
             {{ organization }}
         </div>
 
+
         <div class="client-data">
             <label for="{{ client }}">Данные клиента: </label>
             {{ client }}
+
         </div>
     </div>
         <div>
         <input type="button" value="Создать заявку" onclick="toggleVisibility(this);" class="creation-button" /><br>
             <div class="request-creation-container">
-                <form name="problem" method="post" action="">
-                    <label for="problem-text-id" style="display: block; text-align: left; margin-bottom: 2px;">Заявка в техническую поддержку:</label>
-                    <textarea class="problem-text" id="problem-text-id" name="problem_text" cols="100" rows="10"></textarea>
-                    <input type="submit" value="Отправить заявку" style="float: left; margin: 10px 1px">
+                <form name="problem" method="post" action="{% url 'send_request' %}">
+                    {% csrf_token %}
+                    <label for="{{ req_form.product.id_for_label }}"></label>
+                    <span>{{ req_form.product }}</span>
+                    <label for="{{ req_form.problem.id_for_label }}"></label>
+                    <span>{{ req_form.problem }}</span>
+                    <input type="submit" value="Отправить заявку">
                 </form>
 
             </div>
             <div class="requests-container">
-                <table class="table table-responsive table-hover">
+                <table class="table table-responsive table-hover" id="mytable">
                 <thead>
-                    <tr><th>Column</th><th>Column</th><th>Column</th><th>Column</th></tr>
+                    <tr><th scope="col">Column</th><th scope="col">№ Заявки</th><th scope="col">Статус</th><th scope="col">Дата создания</th></tr>
                 </thead>
-                <tbody>
-                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
-                        <td><i class="fa fa-plus" aria-hidden="true"></i></td>
-                        <td>data</td>
-                        <td>data</td>
-                        <td>data</td>
-                    </tr>
-                </tbody>
-                <tbody id="group-of-rows-1" class="collapse">
+                <tfoot>
                     <tr>
-                        <td>- child row</td>
-                        <td>data 1</td>
-                        <td>data 1</td>
-                        <td>data 1</td>
+                        <td>
+                            <nav aria-label="Page navigation">
+                                 <ul class="pagination">
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page=1">
+                                        Первая
+                                      </a>
+                                    </li>
+                                    <li class="page-item disabled">
+                                      {% if page_obj.has_previous %}
+                                          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                                            <span aria-hidden="false">«</span>
+                                            <span class="sr-only">Предыдущая</span>
+                                          </a>
+                                      {% else %}
+                                          <a class="page-link disabled" href="#" aria-label="Предыдущая">
+                                            <span aria-hidden="false">«</span>
+                                            <span class="sr-only">Предыдущая</span>
+                                          </a>
+                                      {% endif %}
+                                    </li>
+                                     {% if page_obj.has_previous %}
+                                         <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                                         </li>
+                                    {% endif %}
+                                    <li class="page-item active">
+                                      <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                                    </li>
+                                    {% if page_obj.has_next %}
+                                         <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                                         </li>
+                                    {% endif %}
+
+                                    <li class="page-item">
+                                      {% if page_obj.has_next %}
+                                          <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Следующая">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Следующая</span>
+                                      </a>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page={{ last_page }}">Последняя</a>
+                                    </li>
+                                 </ul>
+                            </nav>
+                        </td>
                     </tr>
-                    <tr>
-                        <td>- child row</td>
-                        <td>data 1</td>
-                        <td>data 1</td>
-                        <td>data 1</td>
-                    </tr>
-                </tbody>
-                <tbody>
-                    <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-2" aria-expanded="false" aria-controls="group-of-rows-2">
-                        <td><i class="fa fa-plus" aria-hidden="true"></i></td>
-                        <td>data</td>
-                        <td>data</td>
-                        <td>data</td>
-                    </tr>
-                </tbody>
-                <tbody id="group-of-rows-2" class="collapse">
-                    <tr>
-                        <td>- child row</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                    </tr>
-                    <tr>
-                        <td>- child row</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                        <td>data 2</td>
-                    </tr>
-                </tbody>
+                </tfoot>
+
+                {% for req in page_obj %}
+                    <tbody class="main-row row{{ forloop.counter0 }}">
+                        <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-{{ forloop.counter0 }}" aria-expanded="false" aria-controls="group-of-rows-{{ forloop.counter0 }}">
+                            <td><i class="fa fa-plus" >&#62;</i></td>
+                            <td>{{ req.id }}</td>
+                            <td>{{ req.status }}</td>
+                            <td>{{ req.registration_date }}</td>
+                        </tr>
+                        <tr id="group-of-rows-{{ forloop.counter0 }}" class="collapse ans-row{{ forloop.counter0 }}">
+                            <td colspan="4">
+                                <table class="table table-responsive table-bordered">
+                                    <thead>
+                                        <tr><th class="sender-col" scope="col">Отправитель</th><th class="message-col" scope="col">Сообщение</th><th class="data-col" scope="col">Дата сообщения</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for ans in answers %}
+
+                                            {% ifequal ans.req.id req.id %}
+                                                <tr>
+                                                    <td class="sender-col">{{ ans.from_user.last_name}} {{ ans.from_user.first_name  }}</td>
+                                                    <td class="message-col">{{ ans.answer }}</td>
+                                                    <td class="data-col">{{ ans.date }}</td>
+                                                </tr>
+                                            {% endifequal %}
+                                        {% endfor %}
+                                            <tr>
+                                                <td colspan="3">
+                                                    <form name="problem" method="post" action="{% url 'send_message' %}?request_id={{ req.id }}">
+                                                        {% csrf_token %}
+                                                        <label for="{{ message_form.answer.id_for_label }}"></label>
+                                                        <span>{{ message_form.answer }}</span>
+                                                        <input type="submit" value="Отправить сообщение">
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+                            <td>
+                        </tr>
+                    </tbody>
+
+                {% endfor %}
                 </table>
 
             </div>
         </div>
 
     {% endblock %}
-
 
 </body>
 </html>

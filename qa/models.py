@@ -13,11 +13,17 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.title
 
+    def __str__(self):
+        return self.title
+
 
 class Product(models.Model):
     product = models.CharField(max_length=20, unique=True)
 
     def __unicode__(self):
+        return self.product
+
+    def __str__(self):
         return self.product
 
 
@@ -29,6 +35,9 @@ class TPKey(models.Model):
     def __unicode__(self):
         return self.key
 
+    def __str__(self):
+        return self.key
+
 
 class TPKeysProduct(models.Model):
     key_id = models.ForeignKey(TPKey, on_delete=models.RESTRICT)
@@ -37,14 +46,29 @@ class TPKeysProduct(models.Model):
     def __unicode__(self):
         return self.id
 
+    def __str__(self):
+        return self.key_id
+
 
 class CustomUser(AbstractUser):
     organization_title = models.ForeignKey(Organization, to_field='title',
                                            on_delete=models.RESTRICT, related_name='clients_organization', null=False)
 
+    def __str__(self):
+        return self.username
+
+    def __unicode__(self):
+        return self.last_name + ' ' + self.first_name
+
+
+class Status(models.Model):
+    status = models.CharField(max_length=20, unique=True)
+
+    def __str__(self):
+        return self.status
+
 
 class Request(models.Model):
-    id = models.AutoField(primary_key=True)
     client = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
     client_organization = models.ForeignKey(Organization, to_field='title', on_delete=models.RESTRICT,
                                             related_name='request_clients_organization')
@@ -56,5 +80,20 @@ class Request(models.Model):
 
     problem = models.TextField()
 
+    status = models.ForeignKey(Status, to_field='status', on_delete=models.RESTRICT, default='Открыта')
+
     def __unicode__(self):
-        return self.id
+        return str(self.id)
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Correspondence(models.Model):
+    req = models.ForeignKey(Request, on_delete=models.RESTRICT)
+    answer = models.TextField()
+    from_user = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id)
