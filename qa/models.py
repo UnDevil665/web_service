@@ -54,6 +54,12 @@ class CustomUser(AbstractUser):
     organization_title = models.ForeignKey(Organization, to_field='title',
                                            on_delete=models.RESTRICT, related_name='clients_organization', null=False)
 
+    def __str__(self):
+        return self.username
+
+    def __unicode__(self):
+        return self.last_name + ' ' + self.first_name
+
 
 class Status(models.Model):
     status = models.CharField(max_length=20, unique=True)
@@ -77,10 +83,10 @@ class Request(models.Model):
     status = models.ForeignKey(Status, to_field='status', on_delete=models.RESTRICT, default='Открыта')
 
     def __unicode__(self):
-        return self.id
+        return str(self.id)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Correspondence(models.Model):
@@ -90,4 +96,4 @@ class Correspondence(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)

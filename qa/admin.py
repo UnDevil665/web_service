@@ -10,6 +10,11 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = CustomUser
     list_display = ('username', 'password', 'email', 'first_name', 'last_name', 'organization_title')
+    fieldsets = UserAdmin.fieldsets + (
+        ('Organization', {'fields': ('organization_title',)}),
+    )
+
+    list_filter = ('organization_title',)
 
 
 class OrganizationAdmin(admin.ModelAdmin):
@@ -34,7 +39,8 @@ class RequestAdmin(admin.ModelAdmin):
 class CorrespondenceAdmin(admin.ModelAdmin):
     model = Correspondence
     list_display = ('id', 'req', 'from_user', 'answer', 'date')
-    fields = ['__all__']
+    fields = ['req', 'from_user', 'answer']
+    list_filter = ('date', 'from_user')
 
 
 class TPKeysProductAdmin(admin.ModelAdmin):
@@ -57,4 +63,3 @@ admin.site.register(Correspondence, CorrespondenceAdmin)
 admin.site.register(Status)
 admin.site.register(TPKeysProduct, TPKeysProductAdmin)
 admin.site.register(TPKey, TPKeyAdmin)
-

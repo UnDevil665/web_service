@@ -1,15 +1,13 @@
-from django.shortcuts import render, HttpResponseRedirect, Http404, redirect
+from django.shortcuts import render, HttpResponseRedirect
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import ListView
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.contrib.auth import authenticate, login
-from rest_framework.parsers import JSONParser
+
 
 from .forms import UserRegisterForm, RequestCreationForm, MessageSendForm
 from .models import Organization, CustomUser, TPKey, TPKeysProduct, Product, Request, Correspondence
-from .serializers import RequestSerializer, CorrespondenceSerializer
 
 
 class OrganizationView(ListView):
@@ -65,7 +63,6 @@ def get_account_page(request, *args, **kwargs):
         # List of client's requests
         requests = Request.objects.filter(client=user).order_by('-registration_date')
 
-
         # Pagination
         paginator = Paginator(requests, 10, allow_empty_first_page=True)
         page_number = request.GET.get('page')
@@ -109,4 +106,3 @@ def send_message(request, *args, **kwargs):
             client = CustomUser.objects.get(username=request.user)
             ans = Correspondence.objects.create(req=req_query, from_user=client, answer=request.POST['answer'])
             return HttpResponseRedirect(reverse('account'))
-
