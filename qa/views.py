@@ -4,6 +4,7 @@ from django.views.generic import ListView
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
 
 
 from .forms import UserRegisterForm, RequestCreationForm, MessageSendForm
@@ -18,18 +19,25 @@ def signup(request, *args, **kwargs):
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            key = request.POST['tp_key']
-            tp_key = TPKey.objects.get(key=key)
-            organization_title = tp_key.organization_title
-            new_user = CustomUser.objects.create_user(username=request.POST['username'], email=request.POST['email'],
-                                                      password=request.POST['password'],
-                                                      is_superuser=0, first_name=request.POST['first_name'],
-                                                      last_name=request.POST['last_name'], is_staff=0, is_active=1,
-                                                      organization_title=organization_title)
-            new_user.save()
+            try:
+                inn = request.POST['inn']
+                key = request.POST['tp_key']
+                organization = Organization.objects.get(inn=inn)
+                tp_key = TPKey.objects.get(key=key, organization_title=organization.title)
 
-            return HttpResponseRedirect(reverse(get_main_page))
-            # //TODO make automatic authorization after registration
+                new_user = CustomUser.objects.create_user(username=request.POST['username'],
+                                                          email=request.POST['email'],
+                                                          password=request.POST['password'],
+                                                          is_superuser=0, first_name=request.POST['first_name'],
+                                                          last_name=request.POST['last_name'], is_staff=0, is_active=1,
+                                                          organization_title=organization)
+                new_user.save()
+                return HttpResponseRedirect(reverse(get_main_page))
+
+                # //TODO make automatic authorization after registration
+            except ObjectDoesNotExist as e:
+                form.add_error(None, "Данное сочетание компании и ключа ТП не обнаружено в системе")
+                return render(request, 'register_page.html', {'form': form, })
     else:
         form = UserRegisterForm(request.POST)
         return render(request, 'register_page.html', {'form': form, })

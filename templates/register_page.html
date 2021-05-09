@@ -19,6 +19,11 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
         <div class="fieldWrapper">
+            <label for="{{ form.inn.id_for_label }}">ИНН</label>
+            <span>{{ form.inn }}</span>
+            <span>{{ form.inn.errors }}</span>
+        </div>
+        <div class="fieldWrapper">
             <label for="{{ form.first_name.id_for_label }}">Имя</label>
             <span>{{ form.first_name }}</span>
             <span>{{ form.first_name.errors }}</span>
