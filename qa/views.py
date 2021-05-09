@@ -4,6 +4,7 @@ from django.views.generic import ListView
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
 
 
 from .forms import UserRegisterForm, RequestCreationForm, MessageSendForm
@@ -33,9 +34,8 @@ def signup(request, *args, **kwargs):
                 new_user.save()
                 return HttpResponseRedirect(reverse(get_main_page))
 
-
                 # //TODO make automatic authorization after registration
-            except Exception as e:
+            except ObjectDoesNotExist as e:
                 form.add_error(None, "Данное сочетание компании и ключа ТП не обнаружено в системе")
                 return render(request, 'register_page.html', {'form': form, })
     else:
