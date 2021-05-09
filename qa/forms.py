@@ -18,6 +18,7 @@ class CustomUserChangeForm(UserChangeForm):
 
 class UserRegisterForm(forms.Form):
 
+    inn = forms.CharField(max_length=10, label="ИНН")
     tp_key = forms.CharField(max_length=6, label="Ключ ТП")
     first_name = forms.CharField(max_length=150, label="Имя")
     last_name = forms.CharField(max_length=150, label="Фамилия")
