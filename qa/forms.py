@@ -6,14 +6,14 @@ from django import forms
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = CustomUser
-        fields = ('organization_title',)
+        fields = '__all__'
 
 
 class CustomUserChangeForm(UserChangeForm):
 
     class Meta(UserChangeForm):
         model = CustomUser
-        fields = ('organization_title',)
+        fields = '__all__'
 
 
 class UserRegisterForm(forms.Form):
