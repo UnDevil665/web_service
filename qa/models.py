@@ -30,7 +30,7 @@ class Product(models.Model):
 class TPKey(models.Model):
     key = models.CharField(max_length=6, unique=True)
     products = models.ManyToManyField(Product, through="TPKeysProduct", through_fields=('key_id', 'product_id'))
-    organization_title = models.ForeignKey(Organization, to_field="title", on_delete=models.RESTRICT)
+    organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
 
     def __unicode__(self):
         return self.key
@@ -40,19 +40,19 @@ class TPKey(models.Model):
 
 
 class TPKeysProduct(models.Model):
-    key_id = models.ForeignKey(TPKey, on_delete=models.RESTRICT)
-    product_id = models.ForeignKey(Product, on_delete=models.RESTRICT)
+    key = models.ForeignKey(TPKey, on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
 
     def __unicode__(self):
         return self.id
 
     def __str__(self):
-        return self.key_id
+        return self.key
 
 
 class CustomUser(AbstractUser):
-    organization_title = models.ForeignKey(Organization, to_field='title',
-                                           on_delete=models.RESTRICT, related_name='clients_organization', null=False)
+    organization = models.ForeignKey(Organization,
+                                     on_delete=models.RESTRICT, related_name='clients_organization_pk', null=False)
 
     def __str__(self):
         return self.username
@@ -70,17 +70,16 @@ class Status(models.Model):
 
 class Request(models.Model):
     client = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
-    client_organization = models.ForeignKey(Organization, to_field='title', on_delete=models.RESTRICT,
-                                            related_name='request_clients_organization')
+    organization = models.ForeignKey(Organization, on_delete=models.RESTRICT,
+                                     related_name='request_clients_organization')
 
-    product = models.ForeignKey(Product, to_field='product', on_delete=models.RESTRICT,
-                                related_name='requests_product')
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT, related_name='requests_product')
 
     registration_date = models.DateTimeField(auto_now_add=True)
 
     problem = models.TextField()
 
-    status = models.ForeignKey(Status, to_field='status', on_delete=models.RESTRICT, default='Открыта')
+    status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
     def __unicode__(self):
         return str(self.id)
