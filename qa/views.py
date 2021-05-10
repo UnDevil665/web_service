@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 from .forms import UserRegisterForm, RequestCreationForm, MessageSendForm
-from .models import Organization, CustomUser, TPKey, TPKeysProduct, Product, Request, Correspondence
+from .models import Organization, CustomUser, TPKey, TPKeysProduct, Product, Request, Correspondence, Status
 
 
 class OrganizationView(ListView):
@@ -23,14 +23,14 @@ def signup(request, *args, **kwargs):
                 inn = request.POST['inn']
                 key = request.POST['tp_key']
                 organization = Organization.objects.get(inn=inn)
-                tp_key = TPKey.objects.get(key=key, organization_title=organization.title)
+                tp_key = TPKey.objects.get(key=key, organization=organization)
 
                 new_user = CustomUser.objects.create_user(username=request.POST['username'],
                                                           email=request.POST['email'],
                                                           password=request.POST['password'],
                                                           is_superuser=0, first_name=request.POST['first_name'],
                                                           last_name=request.POST['last_name'], is_staff=0, is_active=1,
-                                                          organization_title=organization)
+                                                          organization=organization)
                 new_user.save()
                 return HttpResponseRedirect(reverse(get_main_page))
 
@@ -54,12 +54,12 @@ def get_account_page(request, *args, **kwargs):
     if request.method == "GET":
         # Client's information
         user = CustomUser.objects.get(username=request.user)
-        organization = user.organization_title.title
+        organization = user.organization
         client = user.last_name + ' ' + user.first_name
 
         # List of available products to client's company
-        keys = TPKey.objects.filter(organization_title=organization).values('id')
-        products = TPKeysProduct.objects.filter(key_id_id__in=keys).values('product_id')
+        keys = TPKey.objects.filter(organization=organization).values('id')
+        products = TPKeysProduct.objects.filter(key__in=keys).values('product_id')
         products = Product.objects.filter(pk__in=products)
 
         req_form = RequestCreationForm()
@@ -95,10 +95,12 @@ def send_request(request, *args, **kwargs):
         req_form = RequestCreationForm(request.POST)
         if req_form.is_valid():
             client = CustomUser.objects.get(username=request.user)
-            organization = Organization.objects.get(title=client.organization_title.title)
-            product = Product.objects.get(product=request.POST['product'])
-            req = Request.objects.create(client=client, client_organization=organization,
-                                         problem=request.POST['problem'], product=product)
+            organization = Organization.objects.get(title=client.organization)
+            print(request.POST['product'])
+            product = Product.objects.get(pk=request.POST['product'])
+            req = Request.objects.create(client=client, organization=organization,
+                                         problem=request.POST['problem'], product=product,
+                                         status=Status.objects.get(status='Открыта'))
             ans = Correspondence.objects.create(req=req, from_user=client, answer=request.POST['problem'])
             return HttpResponseRedirect(reverse(get_account_page))
 
